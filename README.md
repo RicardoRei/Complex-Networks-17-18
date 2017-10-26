@@ -3,7 +3,5 @@ Repository for Complex Networks 17/18 project with professor Francisco dos Santo
 
 ## Description:
 
-For this project we had to choose a real-world dataset analyze it. 
-The dataset we choosed is about disease spreading and can be found in http://sing.stanford.edu/flu/
-
-
+For this project we had to choose a real-world dataset and analyze it. 
+The dataset we chose is about disease spreading and can be found in http://sing.stanford.edu/flu/

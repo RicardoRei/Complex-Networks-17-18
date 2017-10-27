@@ -112,11 +112,12 @@ def plot_interactions_number_log_scale(network):
     plt.plot(k_values, Pk, 'bo')
     plt.show()
 
-def main():
+def run():
     plot_weighted_degree_histogram(network=network)
     plot_weighted_cumulative_dist(network=network)
     plot_interactions_cumulative_dist(network=network)
     plot_interactions_number_log_scale(network=network)
 
-main()
+if __name__ == '__main__':
+    run()
 

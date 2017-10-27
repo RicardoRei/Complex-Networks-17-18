@@ -1,6 +1,5 @@
 import os
 import networkx as nx
-import operator
 
 dataset_root_path = "flu-data" # corpora
 parameters_path = '/dropoff=0/minimumDuration=1/deltaT=1620/staticWeightedEdgeList_at=1350_min=540_max=2159.txt'
@@ -28,6 +27,7 @@ def load_nodes():
     roles = sorted(roles, key=lambda id: id)[12:]
     return roles
 
+
 """
     Loads the edges
     Returns the list of edges
@@ -47,17 +47,19 @@ def load_edges(contact_strategy_path):
 
     return edges
 
+
 """
     Returns the NetworkX network structure loaded with the nodes and edges
     Parameter contact_strategy_path - "contact strategy" folder specified (Default = addThenChop)
 """
-def load_network(contact_strategy_path = addThenChop_path):
+def load_network(contact_strategy_path=addThenChop_path):
     network = nx.Graph()
 
     nodes = load_nodes()
     edges = load_edges(contact_strategy_path)
 
     N = len(nodes)
+    E = len(edges)
 
     for i in range(1, N + 1):
         network.add_node(i)
@@ -66,14 +68,3 @@ def load_network(contact_strategy_path = addThenChop_path):
     network.remove_node(548)  # este gajo faltou as aulas...
 
     return network
-
-def print_node(id):
-    return str(id) + "(Role Here)"
-
-def evaluate_metric(metric_name, metric_dictionary):
-    min_node, min_value = min(enumerate(metric_dictionary.values()), key = operator.itemgetter(1))
-    max_node, max_value = max(enumerate(metric_dictionary.values()), key = operator.itemgetter(1))
-    print("Average",metric_name,":", sum(metric_dictionary.values()) / len(metric_dictionary.values()))
-    print("Node with lowest",metric_name, print_node(min_node), "-> (", min_value, ")")
-    print("Node with highest",metric_name, print_node(max_node), "-> (", max_value, ")")
-

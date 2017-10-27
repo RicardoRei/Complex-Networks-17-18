@@ -3,11 +3,13 @@ import networkx as nx
 from BuildNetwork import load_network
 
 network = load_network()
-def main():
+
+def run():
 	diameter = nx.diameter(network)
 	print(diameter)
 
-main()
+if __name__ == '__main__':
+    run()
 
 '''
 Diameter:

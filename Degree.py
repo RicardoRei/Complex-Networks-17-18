@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from BuildNetwork import load_network
+from infection_spread import load_network
 
 network = load_network()
 

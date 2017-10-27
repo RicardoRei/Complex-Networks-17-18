@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from BuildNetwork import load_network
+from build_network import load_network
 
 network = load_network()
 

@@ -68,3 +68,40 @@ def load_network(contact_strategy_path=addThenChop_path):
     network.remove_node(548)  # este gajo faltou as aulas...
 
     return network
+
+
+"""
+"""
+def get_roles():
+    roles = load_nodes()
+    size_roles = len(roles)
+    teachers, students, staffs, others = [], [], [], []
+    dict_roles = {}
+
+    for i in range(size_roles):
+
+        if roles[i][1] == 'teacher':
+            teachers.append(roles[i][0])
+
+        if roles[i][1] == 'student':
+            students.append(roles[i][0])
+
+        if roles[i][1] == 'staff':
+            staffs.append(roles[i][0])
+
+        if roles[i][1] == 'other':
+            others.append(roles[i][0])
+
+    dict_roles['teacher'] = teachers
+    dict_roles['student'] = students
+    dict_roles['staff'] = staffs
+    dict_roles['other'] = others
+
+    print(dict_roles)
+    return dict_roles
+
+def run():
+    get_roles()
+
+if __name__ == '__main__':
+    run()

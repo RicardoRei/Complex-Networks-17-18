@@ -1,10 +1,10 @@
 import numpy as np
 import networkx as nx
-from BuildNetwork import load_network
+from build_network import load_network
 
 network = load_network()
 
-def main():
+def run():
 	eigenv_centr_not_w = nx.eigenvector_centrality(network)
 	eigenv_centr_w = nx.eigenvector_centrality(network, weight='weight')
 
@@ -23,4 +23,12 @@ def main():
 	print("ID of Maximum Eigenvector Centrality not weighted: ", id_max_evc_not_w)
 	print("ID of Maximum Eigenvector Centrality weighted: ", id_max_evc_w)
 
-main()
+if __name__ == '__main__':
+    run()
+
+'''
+Maximum Eigenvector Centrality not weighted:  0.05848065844832825
+Maximum Eigenvector Centrality weighted:  0.10778672661500492
+ID of Maximum Eigenvector Centrality not weighted:  171
+ID of Maximum Eigenvector Centrality weighted:  520
+'''

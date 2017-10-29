@@ -71,6 +71,7 @@ def load_network(contact_strategy_path=addThenChop_path):
 
 
 """
+    Returns a dictionary where the keys are the four roles and each value is a list with the id's of those with that role
 """
 def get_roles():
     roles = load_nodes()
@@ -97,11 +98,4 @@ def get_roles():
     dict_roles['staff'] = staffs
     dict_roles['other'] = others
 
-    print(dict_roles)
     return dict_roles
-
-def run():
-    get_roles()
-
-if __name__ == '__main__':
-    run()

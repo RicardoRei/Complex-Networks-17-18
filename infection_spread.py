@@ -68,7 +68,8 @@ def load_network(contact_strategy_path = addThenChop_path):
     return network
 
 def print_node(id):
-    return str(id) + "(Role Here)"
+    nodes = load_nodes()
+    return nodes[id]
 
 def evaluate_metric(metric_name, metric_dictionary):
     min_node, min_value = min(enumerate(metric_dictionary.values()), key = operator.itemgetter(1))

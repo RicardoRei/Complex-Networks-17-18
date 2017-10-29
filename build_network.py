@@ -84,7 +84,7 @@ def get_roles():
         if roles[i][1] == 'teacher':
             teachers.append(roles[i][0])
 
-        if roles[i][1] == 'student':
+        if roles[i][1] == 'student' and roles[i][0] != 548: #not allowing the unconnected node to be in the list
             students.append(roles[i][0])
 
         if roles[i][1] == 'staff':

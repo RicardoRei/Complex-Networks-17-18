@@ -23,5 +23,5 @@ In file xxxxxxxx.pdf you can find our analysis to this dataset.
 ## Run
 
 to run a module you just need to open a terminal and use the comand: 
-<br />python <metric>.py
-	<br />where <metric> is the metric you want to compute.
+<br />python "metric".py
+	<br />            where "metric" is the metric you want to compute.

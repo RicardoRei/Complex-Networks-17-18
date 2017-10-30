@@ -53,9 +53,9 @@ def plot_weighted_cumulative_dist(network):
         k_values[k] = k
         cum_Pk[k] = len([i for i in values if i >= k]) / values_range
 
-    plt.xlabel("Cumulative Degree Distribution")
-    plt.ylabel("Degree")
-    plt.title("Figure 2 - Cumulative Degree distribution")
+    plt.xlabel("Weighted Degree")
+    plt.ylabel("Probability")
+    plt.title("Figure 2 - Cumulative Weighted Degree distribution")
     plt.plot(k_values, cum_Pk)
     plt.show()
 
@@ -77,7 +77,7 @@ def plot_interactions_cumulative_dist(network):
         k_values[k] = k
         cum_Pk[k] = len([i for i in weights if i >= k]) / len(weights)
     
-    plt.xlabel("Contact Size (Units: Interactions)")
+    plt.xlabel("Contact Size (Units: CPRs)")
     plt.ylabel("Cumulative Probability")
     plt.title("Figure 3 - Cumulative Distribution of Contacts time")
     data_points, = plt.plot(k_values, cum_Pk, 'bo', label='Data Points')
@@ -106,7 +106,7 @@ def plot_interactions_number_log_scale(network):
     
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlabel("Contact Size (Units: Interactions)")
+    plt.xlabel("Contact Size (Units: CPRs)")
     plt.ylabel("Probability")
     plt.title("Figure 4 - Degree Probability")
     plt.plot(k_values, Pk, 'bo')

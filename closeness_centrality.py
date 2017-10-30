@@ -1,7 +1,7 @@
 import operator
 import networkx as nx
 
-from infection_spread import load_network, load_nodes, evaluate_metric
+from build_network import load_network, load_nodes, evaluate_metric
 
 def run():
     nodes = load_nodes()

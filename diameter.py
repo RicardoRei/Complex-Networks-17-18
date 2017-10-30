@@ -6,7 +6,7 @@ network = load_network()
 
 def run():
 	diameter = nx.diameter(network)
-	print(diameter)
+	print ("Diameter: " + diameter)
 
 if __name__ == '__main__':
     run()

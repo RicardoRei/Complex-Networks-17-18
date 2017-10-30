@@ -6,26 +6,6 @@ from build_network import load_network
 network = load_network()
 
 """
-Average Degree  =  299.850
-Average Weighted Degree = 5424.735
-
-Ignoring the weight of a contact we can see by figure 1 that there is a great number of people with 300/350 contacts per day.
-
-Figure 2 gives us an idea of the how likely is for a person to have more than k contacts per day. We can see having a small number of 
-contacts is unlikely but having more than 340 contacts is very unlikely too.
-
-but are all contacts equal? What is the distribution of the size of a contact?
-
-In order to see the distribution of the size of a contact we need to look to the weights that represent the sum of all interactions between 2 persons.
-
-figure 4 show us a very interesting thing... The relation between the size of a contact and his probability is a power law!
-Which means that as the size of the contact increases the more rare it becames.
-
-The γ in this power law is ≈ 0.667. γ value is typically in the range 2 < γ < 3 for a scale free network
-
-"""
-
-"""
     This Function receives the network graph and plots the degree histogram. 
 """
 def plot_weighted_degree_histogram(network):

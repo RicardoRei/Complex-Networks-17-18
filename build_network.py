@@ -1,5 +1,6 @@
 import os
 import networkx as nx
+import operator
 
 dataset_root_path = "flu-data" # corpora
 parameters_path = '/dropoff=0/minimumDuration=1/deltaT=1620/staticWeightedEdgeList_at=1350_min=540_max=2159.txt'
@@ -69,6 +70,19 @@ def load_network(contact_strategy_path=addThenChop_path):
 
     return network
 
+
+
+def evaluate_metric(metric_name, metric_dictionary):
+
+    def print_node(id):
+        nodes = load_nodes()
+        return nodes[id]
+
+    min_node, min_value = min(enumerate(metric_dictionary.values()), key = operator.itemgetter(1))
+    max_node, max_value = max(enumerate(metric_dictionary.values()), key = operator.itemgetter(1))
+    print("Average",metric_name,":", sum(metric_dictionary.values()) / len(metric_dictionary.values()))
+    print("Node with lowest",metric_name, print_node(min_node), "-> (", min_value, ")")
+    print("Node with highest",metric_name, print_node(max_node), "-> (", max_value, ")")
 
 """
     Returns a dictionary where the keys are the four roles and each value is a list with the id's of those with that role

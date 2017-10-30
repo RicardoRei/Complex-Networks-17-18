@@ -26,14 +26,11 @@ def run():
 	id_max_evc_not_w = list(eigenv_centr_not_w.keys())[list(eigenv_centr_not_w.values()).index(max_evc_not_w)]
 	id_max_evc_w = list(eigenv_centr_w.keys())[list(eigenv_centr_w.values()).index(max_evc_w)]
 
-	id_max_evc_not_w_role = load_nodes()[id_max_evc_not_w]
-	id_max_evc_w_role = load_nodes()[id_max_evc_w]
+	role_max_evc_not_w = load_nodes()[id_max_evc_not_w-1][1]
+	role_max_evc_w = load_nodes()[id_max_evc_w-1][1]
 
-	print("Maximum Eigenvector Centrality not weighted: ", max_evc_not_w)
-	print("Maximum Eigenvector Centrality weighted: ", max_evc_w)
-
-	print("ID and Role of Maximum Eigenvector Centrality not weighted: ", id_max_evc_not_w, ", ", id_max_evc_not_w_role)
-	print("ID and Role of Maximum Eigenvector Centrality weighted: ", id_max_evc_w, ", ", id_max_evc_w_role)
+	print("Maximum eigenvector centrality not weighted: %0.4f, Id: %d and Role: %s" % (max_evc_not_w, id_max_evc_not_w, role_max_evc_not_w))
+	print("Maximum eigenvector centrality weighted: %0.4f, Id: %d and Role: %s" % (max_evc_w, id_max_evc_w, role_max_evc_w))
 
 	'''
 	Calculates the Average of Teachers' and Students' Eigenvector Centrality for weighted and not weighted netowrk

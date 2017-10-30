@@ -37,31 +37,47 @@ def run():
 	'''
 
 	roles = get_roles()
-	evc_teachers_not_w, evc_students_not_w = [], []
+	evc_teachers_not_w, evc_students_not_w, evc_staff_not_w, evc_other_not_w = [], [], [], []
 
 	for i in roles['teacher']:
 		evc_teachers_not_w.append(eigenv_centr_not_w[i])
 	for j in roles['student']:
 		evc_students_not_w.append(eigenv_centr_not_w[j])
+	for k in roles['staff']:
+		evc_staff_not_w.append(eigenv_centr_not_w[k])
+	for l in roles['other']:
+		evc_other_not_w.append(eigenv_centr_not_w[l])
 
 	avg_evc_teachers_not_w = np.mean(evc_teachers_not_w)
 	avg_evc_students_not_w = np.mean(evc_students_not_w)
+	avg_evc_staff_not_w = np.mean(evc_staff_not_w)
+	avg_evc_other_not_w = np.mean(evc_other_not_w)
 
 	print("Average of Teachers' Eigenvector Centrality not weighted: ", avg_evc_teachers_not_w)
 	print("Average of Students' Eigenvector Centrality not weighted: ", avg_evc_students_not_w)
+	print("Average of Staff's Eigenvector Centrality not weighted: ", avg_evc_staff_not_w)
+	print("Average of Others' Eigenvector Centrality not weighted: ", avg_evc_other_not_w)
 
-	evc_teachers_w, evc_students_w = [], []
+	evc_teachers_w, evc_students_w, evc_staff_w, evc_other_w = [], [], [], []
 
 	for i in roles['teacher']:
 		evc_teachers_w.append(eigenv_centr_w[i])
 	for j in roles['student']:
 		evc_students_w.append(eigenv_centr_w[j])
+	for k in roles['staff']:
+		evc_staff_w.append(eigenv_centr_w[k])
+	for l in roles['other']:
+		evc_other_w.append(eigenv_centr_w[l])
 
 	avg_evc_teachers_w = np.mean(evc_teachers_w)
 	avg_evc_students_w = np.mean(evc_students_w)
+	avg_evc_staff_w = np.mean(evc_staff_w)
+	avg_evc_other_w = np.mean(evc_other_w)
 
 	print("Average of Teachers' Eigenvector Centrality weighted: ", avg_evc_teachers_w)
 	print("Average of Students' Eigenvector Centrality weighted: ", avg_evc_students_w)
+	print("Average of Staff's Eigenvector Centrality weighted: ", avg_evc_staff_w)
+	print("Average of Others' Eigenvector Centrality weighted: ", avg_evc_other_w)
 
 
 if __name__ == '__main__':

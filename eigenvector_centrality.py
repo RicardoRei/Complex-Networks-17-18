@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from build_network import load_network, get_roles
+from build_network import load_network, get_roles, load_nodes
 
 network = load_network()
 
@@ -26,11 +26,14 @@ def run():
 	id_max_evc_not_w = list(eigenv_centr_not_w.keys())[list(eigenv_centr_not_w.values()).index(max_evc_not_w)]
 	id_max_evc_w = list(eigenv_centr_w.keys())[list(eigenv_centr_w.values()).index(max_evc_w)]
 
+	id_max_evc_not_w_role = load_nodes()[id_max_evc_not_w]
+	id_max_evc_w_role = load_nodes()[id_max_evc_w]
+
 	print("Maximum Eigenvector Centrality not weighted: ", max_evc_not_w)
 	print("Maximum Eigenvector Centrality weighted: ", max_evc_w)
 
-	print("ID of Maximum Eigenvector Centrality not weighted: ", id_max_evc_not_w)
-	print("ID of Maximum Eigenvector Centrality weighted: ", id_max_evc_w)
+	print("ID and Role of Maximum Eigenvector Centrality not weighted: ", id_max_evc_not_w, ", ", id_max_evc_not_w_role)
+	print("ID and Role of Maximum Eigenvector Centrality weighted: ", id_max_evc_w, ", ", id_max_evc_w_role)
 
 	'''
 	Calculates the Average of Teachers' and Students' Eigenvector Centrality for weighted and not weighted netowrk

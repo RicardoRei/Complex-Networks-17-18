@@ -84,12 +84,14 @@ if __name__ == '__main__':
     run()
 
 '''
-Maximum Eigenvector Centrality not weighted:  0.05848065844832825
-Maximum Eigenvector Centrality weighted:  0.10778672661500492
-ID of Maximum Eigenvector Centrality not weighted:  171
-ID of Maximum Eigenvector Centrality weighted:  520
+Maximum eigenvector centrality not weighted: 0.0585, Id: 171 and Role: student
+Maximum eigenvector centrality weighted: 0.1078, Id: 520 and Role: student
 Average of Teachers' Eigenvector Centrality not weighted:  0.0190850898178
 Average of Students' Eigenvector Centrality not weighted:  0.0371526980624
+Average of Staff's Eigenvector Centrality not weighted:  0.0114173690018
+Average of Others' Eigenvector Centrality not weighted:  0.0160573586792
 Average of Teachers' Eigenvector Centrality weighted:  0.0188688195665
 Average of Students' Eigenvector Centrality weighted:  0.0351413244388
+Average of Staff's Eigenvector Centrality weighted:  0.00149859134629
+Average of Others' Eigenvector Centrality weighted:  0.00452492018843
 '''

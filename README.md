@@ -18,7 +18,7 @@ The dataset we chose is about disease spreading and can be found in http://sing.
 
 ## Analysis
 
-In file xxxxxxxx.pdf you can find our analysis to this dataset.
+In file InfectiousDiseaseSpread.pdf you can find our analysis to this dataset.
 
 ## Run
 

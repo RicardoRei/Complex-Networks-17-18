@@ -1,7 +1,8 @@
 import operator
 import time
 import networkx as nx
-
+import sys
+sys.path.append('..')
 from build_network import load_network, evaluate_metric
 
 def run():

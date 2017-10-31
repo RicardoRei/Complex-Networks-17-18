@@ -2,7 +2,7 @@ import os
 import networkx as nx
 import operator
 
-dataset_root_path = "flu-data" # corpora
+dataset_root_path = "../flu-data" # corpora
 parameters_path = '/dropoff=0/minimumDuration=1/deltaT=1620/staticWeightedEdgeList_at=1350_min=540_max=2159.txt'
 addThenChop_path = dataset_root_path + '/edgeLists/durationCondition/' + 'addThenChop' + parameters_path
 chopThenAdd_path = dataset_root_path + '/edgeLists/durationCondition/' + 'chopThenAdd' + parameters_path

@@ -1,6 +1,8 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('..')
 from build_network import load_network
 
 network = load_network()

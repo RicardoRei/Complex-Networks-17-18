@@ -1,6 +1,7 @@
 import operator
 import networkx as nx
-
+import sys
+sys.path.append('..')
 from build_network import load_network, load_nodes, evaluate_metric
 
 def run():

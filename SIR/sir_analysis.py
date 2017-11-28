@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from build_network import load_network
 
+def xor(a, b):
+    return (a and not b) or (not a and b)
+
 class SIR:
 
     def __init__(self, network):
@@ -83,7 +86,7 @@ class SIR:
 
     def run_simulation(self, iterations, infected_percentage, vaccinated_percentage, vaccine_effectiveness, vaccinate_hubs, beta, delta=None, recovery_days=None):
 
-        assert delta==None or recovery_days==None, "Either run with delta or recovery days, but not with both at the same time"
+        assert xor(delta==None, recovery_days==None), "Run with either delta or recovery days, but not with both at the same time"
         if delta != None:
             recovery_strategy = lambda node: self.node_recovers(node, delta)
         else:
@@ -122,11 +125,16 @@ def plot_simulation(simulation):
     plt.legend(handles=[susceptibles, infected, recovered])
     plt.show()
 
-
 def run():
 
     network = load_network()
     sir_system = SIR(network)
+
+    # Should return error since the simulation is either ran with delta or recovery time
+    #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02, recovery_days=30)
+
+    # Should return error since the simulation is either ran with delta or recovery time
+    #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002)
 
     simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, recovery_days=30)
     simulation2 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02)

@@ -6,6 +6,8 @@ sys.path.append('..')
 from build_network import load_network
 
 network = load_network()
+network.remove_node(548)  # este gajo faltou as aulas...
+
 
 """
     This Function receives the network graph and plots the degree histogram. 
@@ -20,20 +22,32 @@ def plot_weighted_degree_histogram(network):
     plt.show()
 
 """
-    This Function receives the network graph and plots the cumulative degree distribution.
+    This function receives the network and computes the cumulative degree distibution.
     The Cumulative degree distribution cum_Pk represents the fraction of nodes with degree higher than k.
+"""
+def cumulative_degree_dist(network, margin=0):
+    degree = nx.degree(network, weight='weight')
+    values = list(map(lambda x: x[1], degree))
+    max_degree = max(values)
+    values_range = len(values)
+    
+    cum_Pk = [0] * (max_degree + margin)  # + 50 so we can see the limit going to zero.
+    k_values = [0] * (max_degree + margin)
+    for k in range(0, max_degree + margin):
+        k_values[k] = k
+        cum_Pk[k] = len([i for i in values if i >= k]) / values_range
+
+    return (k_values, cum_Pk)
+
+"""
+    This Function receives the network graph and plots the cumulative degree distribution..
 """
 def plot_weighted_cumulative_dist(network):
     degree = nx.degree(network, weight='weight')
     values = list(map(lambda x: x[1], degree))
     max_degree = max(values)
     values_range = len(values)
-
-    cum_Pk = [0] * (max_degree + 50)  # + 50 so we can see the limit going to zero.
-    k_values = [0] * (max_degree + 50)
-    for k in range(0, max_degree + 50):
-        k_values[k] = k
-        cum_Pk[k] = len([i for i in values if i >= k]) / values_range
+    k_values, cum_Pk = cumulative_degree_dist(network, 50)
 
     plt.xlabel("Weighted Degree")
     plt.ylabel("Probability")

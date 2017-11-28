@@ -66,8 +66,6 @@ def load_network(contact_strategy_path=addThenChop_path):
         network.add_node(i)
 
     network.add_weighted_edges_from(edges)
-    network.remove_node(548)  # este gajo faltou as aulas...
-
     return network
 
 

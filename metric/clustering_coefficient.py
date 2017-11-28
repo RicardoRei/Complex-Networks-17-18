@@ -6,9 +6,10 @@ sys.path.append('..')
 from build_network import load_network, evaluate_metric
 
 def run():
-
-    clustering_coefficients = nx.clustering(load_network(), weight='weight')
-    evaluate_metric("Clustering Coefficient", clustering_coefficients)
+	network = load_network()
+	network.remove_node(548)  # este gajo faltou as aulas...
+	clustering_coefficients = nx.clustering(network, weight='weight')
+	evaluate_metric("Clustering Coefficient", clustering_coefficients)
 
 if __name__ == '__main__':
     run()

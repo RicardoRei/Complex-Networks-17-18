@@ -6,6 +6,7 @@ sys.path.append('..')
 from build_network import load_network
 
 network = load_network()
+network.remove_node(548)  # este gajo faltou as aulas...
 
 def run():
 	apl_not_weighted = nx.average_shortest_path_length(network)

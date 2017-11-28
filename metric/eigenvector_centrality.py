@@ -5,6 +5,7 @@ sys.path.append('..')
 from build_network import load_network, get_roles, load_nodes
 
 network = load_network()
+network.remove_node(548)  # este gajo faltou as aulas...
 
 def run():
 

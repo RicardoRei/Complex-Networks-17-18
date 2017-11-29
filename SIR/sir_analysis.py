@@ -125,10 +125,7 @@ class SIR:
     #	@brief:
     #			Function that will compute the probability of an infection due to a contact with a certain weight for a certain beta.
     def probability_of_infection(self, beta, weight):
-        probability_staying_susceptible = 1 - beta
-        for i in range(1, weight):
-            probability_staying_susceptible *= 1 - beta  # 1 - prob. get infected
-        return 1 - probability_staying_susceptible  # prob. of being infected is the 1 - prob. of being healthy after k contacts
+        return 1 - (1-beta)**weight  # prob. of being infected is the 1 - prob. of being healthy after k contacts
 
     #	@brief:
     #			Function that will change the state of a node from Susceptible (0) to Infected (1).
@@ -262,8 +259,8 @@ def run():
 
     simulation1 = sir_system.run_simulation(iterations=30,
         infected_percentage=0.01,
-        vaccinated_percentage=0.1, vaccine_effectiveness=1.0, vaccination_strategy="random",
-        beta=0.02, recovery_days=(3, 10))
+        vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccination_strategy="random",
+        beta=0.003, recovery_days=(3, 10))
 
     plot_simulation(simulation1)
 

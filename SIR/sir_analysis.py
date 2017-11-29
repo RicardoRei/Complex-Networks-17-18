@@ -232,7 +232,6 @@ def plot_simulation(simulation):
     plt.show()
 
 def plot_critical_beta(network):
-<<<<<<< HEAD
 	import json
 	betas = np.arange(0.0, 0.02, 0.0001)
 	sir = SIR(network)

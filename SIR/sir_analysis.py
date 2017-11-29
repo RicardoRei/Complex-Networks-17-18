@@ -72,6 +72,7 @@ class SIR:
         neighbour_idx = -1
 
         for neighbour in neighbours:
+            # FIXME o largest neighbor devia ser atraves do grau e nao do peso da ligacao! 
             current = self.network[nx_node_idx][neighbour]['weight']
 
             if current >= largest:

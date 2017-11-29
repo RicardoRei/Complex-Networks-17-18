@@ -40,7 +40,7 @@ class SIR:
             if round(self.N * vaccinated_percentage) > 0 \
             else 1
         for node_idx in np.random.randint(0, self.N, number_of_vaccinated_nodes):
-            self.vaccinate_node(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
+            self.vaccinate(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
 	
 	#	@brief:
 	#			Function that implements the vaccination strategy that vaccinates a centain percentage of the hubs in the network.
@@ -50,7 +50,7 @@ class SIR:
         i = 0
         while (i / self.N < vaccinated_percentage):
             node_idx = sorted_centralities[-i][0] - 1
-            self.vaccinate_node(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
+            self.vaccinate(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
             i += 1
 	
 	#	@brief:
@@ -61,7 +61,7 @@ class SIR:
             else 1
         for node_idx in np.random.randint(0, self.N, initially_infected):
             if self.node_is_susceptible(node_idx):
-                self.infect_node(node_idx)
+                self.infect(node_idx)
 
 	#	@brief:
 	#			Function to check if a certain node idx is Susceptible.
@@ -71,15 +71,16 @@ class SIR:
 	#	@brief:
 	#			Function that will check each neighbor of a certain node and if the neighbor is infected the node will became infected
 	#			with a certain probability.
-    def check_node_exposure(self, node, beta):
+    def exposure(self, node, beta, new_states):
         node_neighbors = nx.all_neighbors(self.network, node + 1)
         for neighbor_idx, node_neighbor in enumerate(node_neighbors):
             if self.node_is_infected(neighbor_idx):
                 probability_of_infection = self.probability_of_infection(beta, self.network[node + 1][node_neighbor][ 'weight'])
-                self.node_states[node][0] = np.random.choice([0, 1], p = [1 - probability_of_infection, probability_of_infection])
+                new_states[node][0] = np.random.choice([0, 1], p = [1 - probability_of_infection, probability_of_infection])
                 if self.node_is_infected(node):
-                	self.node_states[node][1] = 0 # FIXME 0 or 1? 
+                	new_states[node][1] = 0 # FIXME 0 or 1? 
                 	break
+        return new_states
 
 	#	@brief:
 	#			Function that will compute the probability of an infection due to a contact with a certain weight for a certain beta.
@@ -91,9 +92,9 @@ class SIR:
 
     #	@brief:
     #			Function that will change the state of a node from Susceptible (0) to Infected (1).
-    def infect_node(self, idx):
-    	self.node_states[idx][0] = 1
-    	self.node_states[idx][1] = 0 # FIXME 0 or 1? 
+    def infect(self, node):
+    	self.node_states[node][0] = 1
+    	self.node_states[node][1] = 0
 
     #	@brief:
     #			Function to check if a certain node idx is Infected.
@@ -102,14 +103,15 @@ class SIR:
 
 	#	@brief:
 	#			Function to increment the number of days nodes are is in a certain State.
-    def increment_status_days(self, node):
-        self.node_states[node][1] += 1
+    def increment_status_days(self, node, states):
+        states[node][1] += 1
 
 	#	@brief:
 	#			Function to check the status of the infection and recovers the node according to the recovery strategy.
-    def check_infection_status(self, node, recovery_strategy):
+    def recovery(self, node, recovery_strategy, new_states):
         if recovery_strategy(node):
-            self.vaccinate_node(node) # here vaccinate_node means that the node is going to be Recoverd. Its not really a vaccination
+            new_states[node][0] = 2
+            new_states[node][1] = 0
 
     #	@brief:
 	#			Function that checks if the node is infected for more than the normal days to recover and returns if the node should
@@ -123,18 +125,18 @@ class SIR:
     def check_infection_range(self, node, days_to_recovery):
     	from scipy.stats import norm
     	probability_recovery = norm.cdf(self.node_states[node][1], loc=(days_to_recovery[0] + days_to_recovery[1])/2)
-    	return self.node_recovers(node, probability_recovery)
+    	return self.check_recovery_probability(node, probability_recovery)
     	
 	#	@brief:
 	#			Function that checks with a certain probability if the node recovers.
-    def node_recovers(self, node, delta):
+    def check_recovery_probability(self, node, delta):
         return np.random.choice([1, 2], p=[1 - delta, delta]) == 2
 
 	#	@brief:
 	#			Function that vaccinates a certain node idx changing his state to recovered.
-    def vaccinate_node(self, idx):
-        self.node_states[idx][0] = 2
-        self.node_states[idx][1] = 0
+    def vaccinate(self, node):
+        self.node_states[node][0] = 2
+        self.node_states[node][1] = 0
 
 	#	@brief:
 	#			Function that checks if a certain node is recovered.
@@ -147,8 +149,8 @@ class SIR:
 
         assert xor(delta==None, recovery_days==None), "Run with either delta or recovery days, but not with both at the same time"
         if delta != None:
-            recovery_strategy = lambda node: self.node_recovers(node, delta)
-        elif type(recovery_days) == tuple:
+            recovery_strategy = lambda node: self.check_recovery_probability(node, delta)
+        elif type(recovery_days) != int:
         	recovery_strategy = lambda node: self.check_infection_range(node, recovery_days)
         else:
             recovery_strategy = lambda node: self.check_infection_treshold(node, recovery_days)
@@ -158,18 +160,21 @@ class SIR:
 
         for t in range(iterations):
         	for node_state in self.node_states: # Cycle that increments the number of individuals in a certain state for that time step.
-        		simulation[t][int(node_state[0])] += 1 
+        		simulation[t][int(node_state[0])] += 1
+
         	self.single_simulation_step(beta, recovery_strategy)
 
         return simulation
 
     def single_simulation_step(self, beta, recovery_strategy):
+        new_states = np.array(self.node_states, copy=True)
         for node in self.nodes:
-        	self.increment_status_days(node)
+        	self.increment_status_days(node, new_states)
         	if self.node_is_susceptible(node):
-        		self.check_node_exposure(node, beta)
+        		self.exposure(node, beta, new_states)
         	elif self.node_is_infected(node):
-        		self.check_infection_status(node, recovery_strategy)
+        		self.recovery(node, recovery_strategy, new_states)
+        self.node_states = new_states
 
 
 def plot_simulation(simulation):
@@ -186,27 +191,32 @@ def plot_simulation(simulation):
     plt.legend(handles=[susceptibles, infected, recovered])
     plt.show()
 
+def plot_critical_beta(network):
+	betas = np.arange(0.0, 0.05, 0.001)
+	sir = SIR(network)
+	infected_fraction = [0]*len(betas)
+	for i in range(0, len(betas)):
+		infected_fraction[i] = sir.run_simulation(15, 0.005, 0.0, 1.0, False, betas[i], recovery_days=(3, 10))[14][2]/788
+
+	plt.plot(betas, infected_fraction, color='r', label='Susceptible Percentage')
+	plt.xlabel("Different Transmission Forces")
+	plt.ylabel("Fraction of Infected")
+	plt.title("Transmission Forces")
+	plt.show()
+
 def run():
 
     network = load_network()
     sir_system = SIR(network)
+    #plot_critical_beta(network)
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02, recovery_days=30)
 
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002)
 
-    simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccinate_hubs=False, beta=0.0002, recovery_days=(5, 9))
-    #print (simulation1)
-    #simulation2 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02)
-
-    #simulation3 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=True, beta=0.0002,recovery_days=5)
-    #simulation4 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=True, beta=0.0002, delta=0.02)
-
+    simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccinate_hubs=False, beta=0.03, recovery_days=(3, 10))
     plot_simulation(simulation1)
-    #plot_simulation(simulation2)
-    #plot_simulation(simulation3)
-    #plot_simulation(simulation4)
 
 if __name__ == '__main__':
     run()

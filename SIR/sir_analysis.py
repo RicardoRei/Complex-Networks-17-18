@@ -192,11 +192,22 @@ def plot_simulation(simulation):
     plt.show()
 
 def plot_critical_beta(network):
-	betas = np.arange(0.0, 0.05, 0.001)
+	import json
+	betas = np.arange(0.0, 0.02, 0.0001)
 	sir = SIR(network)
 	infected_fraction = [0]*len(betas)
+	print (len(betas))
 	for i in range(0, len(betas)):
-		infected_fraction[i] = sir.run_simulation(15, 0.005, 0.0, 1.0, False, betas[i], recovery_days=(3, 10))[14][2]/788
+		infected_fraction[i] = sir.run_simulation(30, 0.005, 0.0, 1.0, False, betas[i], recovery_days=(3, 10))[14][2]/788
+		print ("beta[i] = %f, percentage = %f" % (betas[i], infected_fraction[i]*100))
+
+	f = open('critical_beta_percentage.txt', 'w')
+	json.dump(infected_fraction, f)
+	f.close()
+
+	f = open('critical_betas.txt', 'w')
+	json.dump(betas, f)
+	f.close()
 
 	plt.plot(betas, infected_fraction, color='r', label='Susceptible Percentage')
 	plt.xlabel("Different Transmission Forces")
@@ -208,15 +219,15 @@ def run():
 
     network = load_network()
     sir_system = SIR(network)
-    #plot_critical_beta(network)
+    plot_critical_beta(network)
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02, recovery_days=30)
 
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002)
 
-    simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccinate_hubs=False, beta=0.03, recovery_days=(3, 10))
-    plot_simulation(simulation1)
+    #simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccinate_hubs=False, beta=0.03, recovery_days=(3, 10))
+    #plot_simulation(simulation1)
 
 if __name__ == '__main__':
     run()

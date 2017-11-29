@@ -112,10 +112,19 @@ class SIR:
             self.vaccinate_node(node) # here vaccinate_node means that the node is going to be Recoverd. Its not really a vaccination
 
     #	@brief:
-	#			Function that checks if the node is infected for more than the normal days to recover.
+	#			Function that checks if the node is infected for more than the normal days to recover and returns if the node should
+	#			recover.
     def check_infection_treshold(self, node, days_to_recovery):
         return self.node_is_infected(node) and self.node_states[node][1] >= days_to_recovery
 
+    #	@brief:
+	#			Function that checks if the node infected is in the period of recuperation and with a given distribution (cumulative normal
+	#			distribution the node recovers.
+    def check_infection_range(self, node, days_to_recovery):
+    	from scipy.stats import norm
+    	probability_recovery = norm.cdf(self.node_states[node][1], loc=(days_to_recovery[0] + days_to_recovery[1])/2)
+    	return self.node_recovers(node, probability_recovery)
+    	
 	#	@brief:
 	#			Function that checks with a certain probability if the node recovers.
     def node_recovers(self, node, delta):
@@ -139,6 +148,8 @@ class SIR:
         assert xor(delta==None, recovery_days==None), "Run with either delta or recovery days, but not with both at the same time"
         if delta != None:
             recovery_strategy = lambda node: self.node_recovers(node, delta)
+        elif type(recovery_days) == tuple:
+        	recovery_strategy = lambda node: self.check_infection_range(node, recovery_days)
         else:
             recovery_strategy = lambda node: self.check_infection_treshold(node, recovery_days)
 
@@ -146,8 +157,8 @@ class SIR:
         simulation = np.zeros((iterations, 3))
 
         for t in range(iterations):
-        	for node_state in self.node_states:
-        		simulation[t][int(node_state[0])] += 1
+        	for node_state in self.node_states: # Cycle that increments the number of individuals in a certain state for that time step.
+        		simulation[t][int(node_state[0])] += 1 
         	self.single_simulation_step(beta, recovery_strategy)
 
         return simulation
@@ -179,14 +190,13 @@ def run():
 
     network = load_network()
     sir_system = SIR(network)
-
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02, recovery_days=30)
 
     # Should return error since the simulation is either ran with delta or recovery time
     #sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002)
 
-    simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, recovery_days=5)
+    simulation1 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccinate_hubs=False, beta=0.0002, recovery_days=(5, 9))
     #print (simulation1)
     #simulation2 = sir_system.run_simulation(iterations=30, infected_percentage=0.005, vaccinated_percentage=0.6, vaccine_effectiveness=0.99, vaccinate_hubs=False, beta=0.0002, delta=0.02)
 

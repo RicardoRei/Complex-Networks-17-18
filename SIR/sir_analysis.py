@@ -42,20 +42,22 @@ class SIR:
     #	@brief:
     #			Function that implements the vaccination strategy that randomly vaccinates a percentage of the nodes.
     def vaccinate_randomly(self, vaccinated_percentage, vaccine_effectiveness):
-        number_of_vaccinated_nodes = round(self.N * vaccinated_percentage) \
-            if round(self.N * vaccinated_percentage) > 0 \
-            else 1
-        for node_idx in np.random.randint(0, self.N, number_of_vaccinated_nodes):
-            self.vaccinate(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
-
+        number_of_vaccinated_nodes = round(self.N * vaccinated_percentage)
+        count = 0
+        while count < number_of_vaccinated_nodes:
+            node = np.random.random_integers(self.N)-1
+            if not self.node_is_recovered(node):
+                self.vaccinate(node) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
+                count+=1
+    
     #	@brief:
     #			Function that implements the vaccination strategy that vaccinates a certain percentage of the hubs in the network.
     def vaccinate_hubs(self, vaccinated_percentage, vaccine_effectiveness):
-        centralities = nx.degree_centrality(self.network)
-        sorted_centralities = sorted(centralities.items(), key=lambda item: (item[1], item[0]))
+        degrees = nx.degree(self.network, weight='weight')
+        sorted_degrees = sorted(degrees, key=lambda item: (item[1], item[0]))
         i = 0
         while (i / self.N < vaccinated_percentage):
-            node_idx = sorted_centralities[-i][0] - 1
+            node_idx = sorted_degrees[-i][0] - 1
             self.vaccinate(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
             i += 1
 
@@ -99,9 +101,12 @@ class SIR:
         initially_infected = round(self.N * infected_percentage) \
             if round(self.N * infected_percentage) > 0 \
             else 1
-        for node_idx in np.random.randint(0, self.N, initially_infected):
-            if self.node_is_susceptible(node_idx):
-                self.infect(node_idx)
+        count = 0
+        while count < initially_infected:
+            node = np.random.random_integers(self.N)-1
+            if self.node_is_susceptible(node):
+                self.infect(node)
+                count+=1
 
     #	@brief:
     #			Function to check if a certain node idx is Susceptible.
@@ -215,9 +220,9 @@ class SIR:
 
 
 def plot_simulation(simulation):
-    susceptible_percentage = list(map(lambda x: x / 788, simulation[:, 0]))
-    infected_percentage = list(map(lambda x: x / 788, simulation[:, 1]))
-    recovered_percentage = list(map(lambda x: x / 788, simulation[:, 2]))
+    susceptible_percentage = list(map(lambda x: (x / 788)*100, simulation[:, 0]))
+    infected_percentage = list(map(lambda x: (x / 788)*100, simulation[:, 1]))
+    recovered_percentage = list(map(lambda x: (x / 788)*100, simulation[:, 2]))
     days = [i + 1 for i in range(0, len(simulation))]
     susceptibles, = plt.plot(days, susceptible_percentage, color='r', label='Susceptible Percentage')
     infected, = plt.plot(days, infected_percentage, color='b', label='Infected Percentage')
@@ -256,14 +261,19 @@ def run():
 
     network = load_network()
     sir_system = SIR(network)
-
+    vacinados = 560
     simulation1 = sir_system.run_simulation(iterations=30,
-        infected_percentage=0.01,
-        vaccinated_percentage=0.0, vaccine_effectiveness=1.0, vaccination_strategy="random",
-        beta=0.003, recovery_days=(3, 10))
+        infected_percentage=8/789,
+        vaccinated_percentage=vacinados/789, 
+        vaccine_effectiveness=1.0, 
+        vaccination_strategy="random",
+        beta=0.003, 
+        recovery_days=(3, 9))
 
     plot_simulation(simulation1)
-
+    print(simulation1[0])
+    print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - vacinados)/788))
+    print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - vacinados)))
 
 if __name__ == '__main__':
     run()

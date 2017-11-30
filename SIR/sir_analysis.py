@@ -72,9 +72,10 @@ class SIR:
         largest_neighbour = -1
 
         for node in neighbours:
-            node_degree = self.network.degree(node)
-            if node_degree >= largest:
-                largest = node_degree
+            node_weight = self.network[nx_node_idx][node]['weight']
+            #node_degree = self.network.degree(node, weight="weight")
+            if node_weight >= largest:
+                largest = node_weight
                 largest_neighbour = node-1
 
         return largest_neighbour
@@ -245,7 +246,7 @@ def plot_simulation(simulation):
 def run():
     network = load_network()
     sir_system = SIR(network)
-    vacinados = 0
+    vacinados = 789
     simulation1 = sir_system.run_simulation(iterations=30,
         infected_percentage=8/789,
         vaccinated_percentage=vacinados/789, 
@@ -255,9 +256,10 @@ def run():
         recovery_days=(3, 9))
 
     plot_simulation(simulation1)
-    print(simulation1[0])
-    print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - vacinados)/788))
-    print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - vacinados)))
+    print(simulation1)
+    
+    print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])/788))
+    print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])))
 
 if __name__ == '__main__':
     run()

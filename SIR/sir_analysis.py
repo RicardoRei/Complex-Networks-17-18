@@ -69,32 +69,39 @@ class SIR:
         neighbours = nx.neighbors(self.network, nx_node_idx)
 
         largest = -sys.maxsize
-        neighbour_idx = -1
+        largest_neighbour = -1
 
-        for neighbour in neighbours:
-            # FIXME o largest neighbor devia ser atraves do grau e nao do peso da ligacao! 
-            current = self.network[nx_node_idx][neighbour]['weight']
+        for node in neighbours:
+            node_degree = self.network.degree(node)
+            if node_degree >= largest:
+                largest = node_degree
+                largest_neighbour = node-1
 
-            if current >= largest:
-                largest = current
-                neighbour_idx = neighbour-1
-
-        return neighbour_idx
+        return largest_neighbour
 
     #	@brief:
     #			Function that implements the vaccination strategy that vaccinates the largest neighbours of a certain percentage of the hubs in the network.
     def vaccinate_largest_neighbours(self, n_percentage, vaccine_effectiveness):
-
-        n = round(self.N * n_percentage)  if round(self.N * n_percentage) > 0  else 1
+        n = round(self.N * n_percentage)
         m = []
 
-        for node_idx in np.random.randint(0, self.N, n):
-            largest_neighbour_idx = self.find_largest_neighbour(node_idx)
-            if largest_neighbour_idx not in m:
-                m.append(largest_neighbour_idx)
+        nodes = []
+        count = 0
+        while count < n:
+            node = np.random.random_integers(self.N)-1
+            if node not in nodes:
+                nodes.append(node)
+                count += 1
 
-        for node_idx in m:
-            self.vaccinate(node_idx) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
+        for node in nodes:
+            largest_neighbour = self.find_largest_neighbour(node)
+            if largest_neighbour not in m:
+                m.append(largest_neighbour)
+
+        for node in m:
+            self.vaccinate(node) if np.random.choice([1, 0], p=[vaccine_effectiveness, 1 - vaccine_effectiveness]) == 1 else 0
+
+        print (len(m))
 
     #	@brief:
     #			Function that randomly infects a percentage of the nodes in the network.
@@ -238,12 +245,12 @@ def plot_simulation(simulation):
 def run():
     network = load_network()
     sir_system = SIR(network)
-    vacinados = 0.0
+    vacinados = 0
     simulation1 = sir_system.run_simulation(iterations=30,
         infected_percentage=8/789,
         vaccinated_percentage=vacinados/789, 
         vaccine_effectiveness=1.0, 
-        vaccination_strategy="random",
+        vaccination_strategy="largest_neighbours",
         beta=0.003, 
         recovery_days=(3, 9))
 

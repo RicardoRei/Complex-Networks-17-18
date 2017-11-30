@@ -234,35 +234,11 @@ def plot_simulation(simulation):
     plt.legend(handles=[susceptibles, infected, recovered])
     plt.show()
 
-def plot_critical_beta(network):
-	import json
-	betas = np.arange(0.0, 0.02, 0.0001)
-	sir = SIR(network)
-	infected_fraction = [0]*len(betas)
-	print (len(betas))
-	for i in range(0, len(betas)):
-		infected_fraction[i] = sir.run_simulation(30, 0.005, 0.0, 1.0, False, betas[i], recovery_days=(3, 10))[14][2]/788
-		print ("beta[i] = %f, percentage = %f" % (betas[i], infected_fraction[i]*100))
-
-	f = open('critical_beta_percentage.txt', 'w')
-	json.dump(infected_fraction, f)
-	f.close()
-
-	f = open('critical_betas.txt', 'w')
-	json.dump(betas, f)
-	f.close()
-
-	plt.plot(betas, infected_fraction, color='r', label='Susceptible Percentage')
-	plt.xlabel("Different Transmission Forces")
-	plt.ylabel("Fraction of Infected")
-	plt.title("Transmission Forces")
-	plt.show()
 
 def run():
-
     network = load_network()
     sir_system = SIR(network)
-    vacinados = 560
+    vacinados = 0.0
     simulation1 = sir_system.run_simulation(iterations=30,
         infected_percentage=8/789,
         vaccinated_percentage=vacinados/789, 

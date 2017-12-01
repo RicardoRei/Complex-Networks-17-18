@@ -2,8 +2,10 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-sys.path.append('..')
+
 from build_network import load_network
+
+sys.path.append('..')
 
 def xor(a, b):
     return (a and not b) or (not a and b)
@@ -167,7 +169,7 @@ class SIR:
     #	@brief:
     #			Function that checks if the node is infected for more than the normal days to recover and returns if the node should
     #			recover.
-    def check_infection_treshold(self, node, days_to_recovery):
+    def check_infection_threshold(self, node, days_to_recovery):
         return self.node_is_infected(node) and self.node_states[node][1] >= days_to_recovery
 
     #	@brief:
@@ -243,17 +245,45 @@ def plot_simulation(simulation):
     plt.show()
 
 
-def run():
+def main(args):
+
+    if len(args) != 8:
+        print('usage: '
+            'sir.py '
+            '<contact infection rate [0, 1]>'
+            '<iterations> '
+            '<number of infected individuals [0, 789]> '
+            '<number of vaccinated individuals [0, 789]> '
+            '<vaccine effectiveness [0, 1]> '
+            '<vaccination strategy {random, hubs, largest_neighbours}> '
+            '<minimum recovery days> '
+            '<maximum recovery days> ')
+        iterations = 30
+        infected = 8
+        vaccinated = 50
+        vaccine_effectiveness = 0.95
+        strategy = "largest_neighbours"
+        recovery_days = (3, 9)
+        beta = 0.003
+    else:
+        beta = float(args[0])
+        iterations = int(args[1])
+        infected = int(args[2])
+        vaccinated = int(args[3])
+        vaccine_effectiveness = float(args[4])
+        strategy = args[5]
+        recovery_days = (int(args[6]), int(args[7]))
+
     network = load_network()
     sir_system = SIR(network)
-    vacinados = 789
-    simulation1 = sir_system.run_simulation(iterations=30,
-        infected_percentage=8/789,
-        vaccinated_percentage=vacinados/789, 
-        vaccine_effectiveness=1.0, 
-        vaccination_strategy="largest_neighbours",
-        beta=0.003, 
-        recovery_days=(3, 9))
+
+    simulation1 = sir_system.run_simulation(iterations,
+        infected_percentage = infected / 789,
+        vaccinated_percentage = vaccinated / 789,
+        vaccine_effectiveness = vaccine_effectiveness,
+        vaccination_strategy = strategy,
+        recovery_days = recovery_days,
+        beta=beta)
 
     plot_simulation(simulation1)
     print(simulation1)
@@ -262,4 +292,4 @@ def run():
     print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])))
 
 if __name__ == '__main__':
-    run()
+    main(sys.argv[1:])

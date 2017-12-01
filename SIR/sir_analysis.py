@@ -132,7 +132,7 @@ class SIR:
                 probability_of_infection = self.probability_of_infection(beta, self.network[node + 1][node_neighbor][ 'weight'])
                 new_states[node][0] = np.random.choice([0, 1], p = [1 - probability_of_infection, probability_of_infection])
                 if self.node_is_infected(node):
-                    new_states[node][1] = 0 # FIXME 0 or 1?
+                    new_states[node][1] = 0
                     break
         return new_states
 
@@ -246,20 +246,37 @@ def plot_simulation(simulation):
 def run():
     network = load_network()
     sir_system = SIR(network)
-    vacinados = 789
-    simulation1 = sir_system.run_simulation(iterations=30,
-        infected_percentage=8/789,
-        vaccinated_percentage=vacinados/789, 
-        vaccine_effectiveness=1.0, 
-        vaccination_strategy="largest_neighbours",
-        beta=0.003, 
-        recovery_days=(3, 9))
+    betas = [0.0001, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006]
+    v_percs = [0]*7
+    i_percs = [0]*7
 
-    plot_simulation(simulation1)
-    print(simulation1)
+    for i in range(7):
+        vacinados = i*80
+        i_perc = 0
+        v_perc = 0
+        for j in range(4):
+            simulation = sir_system.run_simulation(iterations=30,
+                infected_percentage=8/789,
+                vaccinated_percentage=vacinados/789, 
+                vaccine_effectiveness=1.0, 
+                vaccination_strategy="random",
+                beta=betas[i], 
+                recovery_days=(3, 9))
+            i_perc += (simulation[29][2] + simulation[29][1] - 8 - simulation[0][2])/789
+            v_perc += simulation[0][2]
+        i_percs[i] = i_perc/4
+        v_percs[i] = v_perc/4
+        print (i_percs)
+        print (v_percs)
+    print ("done")
+
+    print (i_percs)
+    print (v_percs)
+    plot_simulation(simulation)
+    print(simulation)
     
-    print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])/788))
-    print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])))
+    print("percentage of population infected over 30 days: %f" % ((simulation[29][2] + simulation[29][1] - 8 - simulation[0][2])/789))
+    print("number of infections: %d" % ((simulation[29][2] + simulation[29][1] - 8 - simulation[0][2])))
 
 if __name__ == '__main__':
     run()

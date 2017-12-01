@@ -1,11 +1,13 @@
+import linecache
+
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import pandas as pd
+import seaborn as sns
 
 from build_network import load_network
-
-sys.path.append('..')
 
 def xor(a, b):
     return (a and not b) or (not a and b)
@@ -291,5 +293,27 @@ def main(args):
     print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])/788))
     print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])))
 
+def plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percentages, betas):
+
+    assert(len(vaccinated_percentages) == len(infected_percentages) and len(vaccinated_percentages) == len(betas))
+
+    data = pd.DataFrame({'X': vaccinated_percentages, 'Y': infected_percentages, 'Z': betas})
+    data_pivoted = data.pivot("X", "Y", "Z")
+
+    sns.heatmap(data_pivoted)
+
+    plt.xlabel("Contact Infection Rates")
+    plt.ylabel("Vaccinated Percentage")
+    plt.title("Percentages of Infected Individuals for '" + strategy_name + "'")
+
+    plt.show()
+
 if __name__ == '__main__':
-    main(sys.argv[1:])
+
+    # main(sys.argv[1:])
+    
+    X = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    Y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    Z = [0.2, 0.33, 0.1, 0.25, 0.0, 0.9, 0.75, 0.88, 0.44, 0.95]
+
+    plot_strategy_heatmap(strategy_name="name_here", vaccinated_percentages=X, infected_percentages=Y, betas=Z)

@@ -136,7 +136,7 @@ class SIR:
                 probability_of_infection = self.probability_of_infection(beta, self.network[node + 1][node_neighbor][ 'weight'])
                 new_states[node][0] = np.random.choice([0, 1], p = [1 - probability_of_infection, probability_of_infection])
                 if self.node_is_infected(node):
-                    new_states[node][1] = 0 # FIXME 0 or 1?
+                    new_states[node][1] = 0
                     break
         return new_states
 
@@ -279,6 +279,7 @@ def main(args):
     network = load_network()
     sir_system = SIR(network)
 
+
     simulation1 = sir_system.run_simulation(iterations,
         infected_percentage = infected / 789,
         vaccinated_percentage = vaccinated / 789,
@@ -289,9 +290,6 @@ def main(args):
 
     plot_simulation(simulation1)
     print(simulation1)
-    
-    print("percentage of population infected over 30 days: %f" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])/788))
-    print("number of infections: %d" % ((simulation1[29][2] + simulation1[29][1] - 8 - simulation1[0][2])))
 
 def plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percentages, betas):
 

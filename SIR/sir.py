@@ -359,10 +359,5 @@ def heatmap_strategy(strategy_name):
 
 if __name__ == '__main__':
 
-    generate_data("largest_neighbours")
-    generate_data("hubs")
     generate_data("random")
-
-    heatmap_strategy("largest_neighbours")
-    heatmap_strategy("hubs")
     heatmap_strategy("random")

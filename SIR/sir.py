@@ -305,6 +305,7 @@ def plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percen
     plt.title("Percentages of Infected Individuals for '" + strategy_name + "'")
 
     plt.show()
+    plt.savefig(strategy_name+"_heatmap.png")
 
 def run_strategy_simulation(strategy_name):
 
@@ -318,8 +319,11 @@ def run_strategy_simulation(strategy_name):
     vaccinated_percentages = []
     infected_percentages = []
 
-    betas_to_iterate = np.arange(0.001, 0.006, 0.001)
-    vaccinated_percentages_to_iterate = np.arange(0, 1, 0.01)
+    #betas_to_iterate = np.arange(0.001, 0.006, 0.001)
+    #vaccinated_percentages_to_iterate = np.arange(0, 1, 0.01)
+
+    betas_to_iterate = np.arange(0.001, 0.006, 0.002)
+    vaccinated_percentages_to_iterate = np.arange(0, 1, 0.1)
 
     print("Collecting Data")
 
@@ -338,9 +342,20 @@ def run_strategy_simulation(strategy_name):
             infected_percentage = (simulation[29][2] + simulation[29][1] - infected - simulation[0][2]) / 789
             infected_percentages.append(infected_percentage)
 
-    print("Done Collecting Data")
-    plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percentages, betas)
+    x = np.array(vaccinated_percentages)
+    y = np.array(betas)
+    z = np.array(infected_percentages)
+
+    np.save(strategy_name + "_vaccinated_percentages", x)
+    np.save(strategy_name + "_betas", y)
+    np.save(strategy_name + "_infected_percentages", z)
+
+    print("Done Collecting Data, Saving")
+
+    plot_strategy_heatmap(strategy_name, x, z, y)
 
 if __name__ == '__main__':
     # main(sys.argv[1:])
     run_strategy_simulation("largest_neighbours")
+    run_strategy_simulation("random")
+    run_strategy_simulation("hubs")

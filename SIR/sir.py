@@ -305,13 +305,58 @@ def plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percen
     plt.title("Percentages of Infected Individuals for '" + strategy_name + "'")
 
     plt.show()
+    plt.savefig(strategy_name+"_heatmap.png")
+
+def run_strategy_simulation(strategy_name):
+
+    sir_system = SIR(load_network())
+    iterations = 30
+    infected = 8
+    vaccine_effectiveness = 0.95
+    recovery_days = (3, 9)
+
+    betas = []
+    vaccinated_percentages = []
+    infected_percentages = []
+
+    #betas_to_iterate = np.arange(0.001, 0.006, 0.001)
+    #vaccinated_percentages_to_iterate = np.arange(0, 1, 0.01)
+
+    betas_to_iterate = np.arange(0.001, 0.006, 0.002)
+    vaccinated_percentages_to_iterate = np.arange(0, 1, 0.1)
+
+    print("Collecting Data")
+
+    for beta in betas_to_iterate:
+        for vaccinated_percentage in vaccinated_percentages_to_iterate:
+            print(beta, vaccinated_percentage)
+            simulation = sir_system.run_simulation(iterations,
+                infected_percentage = infected / 789,
+                vaccinated_percentage = vaccinated_percentage,
+                vaccine_effectiveness = vaccine_effectiveness,
+                vaccination_strategy = strategy_name,
+                recovery_days = recovery_days,
+                beta = beta)
+            betas.append(beta)
+            vaccinated_percentages.append(simulation[29][0])
+            infected_percentage = (simulation[29][2] + simulation[29][1] - infected - simulation[0][2]) / 789
+            infected_percentages.append(infected_percentage)
+
+    x = np.array(vaccinated_percentages)
+    y = np.array(betas)
+    z = np.array(infected_percentages)
+
+    np.save(strategy_name + "_vaccinated_percentages", x)
+    np.save(strategy_name + "_betas", y)
+    np.save(strategy_name + "_infected_percentages", z)
+
+    print("Done Collecting Data, Saving")
+
+    plot_strategy_heatmap(strategy_name, x, z, y)
 
 if __name__ == '__main__':
-
     # main(sys.argv[1:])
-    
-    X = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    Y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    Z = [0.2, 0.33, 0.1, 0.25, 0.0, 0.9, 0.75, 0.88, 0.44, 0.95]
+    run_strategy_simulation("largest_neighbours")
+    run_strategy_simulation("random")
+    run_strategy_simulation("hubs")
 
-    plot_strategy_heatmap(strategy_name="name_here", vaccinated_percentages=X, infected_percentages=Y, betas=Z)

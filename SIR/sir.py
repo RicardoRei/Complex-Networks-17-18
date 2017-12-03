@@ -298,6 +298,7 @@ def plot_strategy_heatmap(strategy_name, vaccinated_percentages, infected_percen
     data = pd.DataFrame({'X': vaccinated_percentages, 'Y': infected_percentages, 'Z': betas})
     data_pivoted = data.pivot("X", "Y", "Z")
 
+
     sns.heatmap(data_pivoted)
 
     plt.xlabel("Contact Infection Rates")
@@ -343,21 +344,20 @@ def generate_data(strategy_name):
     y = np.array(betas)
     z = np.array(infected_percentages)
 
-    np.save(strategy_name + "_vaccinated_percentages", x)
-    np.save(strategy_name + "_betas", y)
-    np.save(strategy_name + "_infected_percentages", z)
+    np.save("Heatmap Data/" + strategy_name + "_vaccinated_percentages", x)
+    np.save("Heatmap Data/" + strategy_name + "_betas", y)
+    np.save("Heatmap Data/" + strategy_name + "_infected_percentages", z)
 
     print("Collecting Data For ", strategy_name)
 
 def heatmap_strategy(strategy_name):
 
-    x = np.load(strategy_name + "_vaccinated_percentages")
-    y = np.load(strategy_name + "_betas")
-    z = np.load(strategy_name + "_infected_percentages")
+    x = np.load("Heatmap Data/" + strategy_name + "_vaccinated_percentages.npy")
+    y = np.load("Heatmap Data/" + strategy_name + "_betas.npy")
+    z = np.load("Heatmap Data/" + strategy_name + "_infected_percentages.npy")
 
     plot_strategy_heatmap(strategy_name, x, z, y)
 
 if __name__ == '__main__':
 
-    generate_data("random")
     heatmap_strategy("random")
